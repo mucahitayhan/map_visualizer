@@ -2,7 +2,7 @@
 
 ## :dart: About ##
 This package provides the visualize the map in ROS2 using MarkerArray and Occupancygrid map types.
-There is two node <a href="#osm_visualizer">osm_visualizer node</a> and <a href="#osm_visualizer">occupancy_pub node</a> in this package.
+There is two node <a href="#osm_visualizer">osm_visualizer-node</a> and <a href="#osm_visualizer">occupancy_pub-node</a> in this package.
 
 ## :rocket: Technologies ##
 
