@@ -1,13 +1,4 @@
-<p align="center">
-  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
-  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
-  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
-  <a href="#memo-license">License</a> &#xa0; | &#xa0;
-  <a href="https://github.com/{{github}}" target="_blank">Author</a>
-</p>
-
-# map_visualizer package
+<h1 align="center">map_visualizer package</h1>
 
 ## :dart: About ##
 This package provides the visualize the map in ROS2 using MarkerArray and Occupancygrid map types.
@@ -17,12 +8,12 @@ This package provides the visualize the map in ROS2 using MarkerArray and Occupa
 The following tools were used in this project:
 
 - [ROS](https://www.ros.org/) Tested on ROS2 Foxy distro.
-- [C++](https://cppreference.com)
 
 ## :white_check_mark: Requirements ##
 Before starting :checkered_flag:, you need to have ROS2(Foxy) and install some ros2 packages.
 
 `sudo apt-get install ros-<distro>-lanelet2`
+
 E.g: `sudo apt-get install ros-foxy-lanelet2`
 
 ## osm_visualizer node
@@ -34,10 +25,10 @@ osm_visualizer node visualizes the .osm(OpenStreetMap) file into RViz MarkerArra
 ### :checkered_flag: How to Run
 
 `ros2 run map_visualizer osm_visualizer --ros-args -p map_path:=path/to/map.osm`
-or
-`ros2 launch map_visualizer osm_visualizer.launch.xml`
-or
-`ros2 launch map_visualizer osm_visualizer.launch.py`
+
+or `ros2 launch map_visualizer osm_visualizer.launch.xml`
+
+or `ros2 launch map_visualizer osm_visualizer.launch.py`
 
 ### Subscribed Topics
 
