@@ -2,6 +2,7 @@
 
 ## :dart: About ##
 This package provides the visualize the map in ROS2 using MarkerArray and Occupancygrid map types.
+There is two node <a href="#osm_visualizer">osm_visualizer node</a> and <a href="#osm_visualizer">occupancy_pub node</a> in this package.
 
 ## :rocket: Technologies ##
 
@@ -11,6 +12,12 @@ The following tools were used in this project:
 
 ## :white_check_mark: Requirements ##
 Before starting :checkered_flag:, you need to have ROS2(Foxy) and install some ros2 packages.
+
+`sudo rosdep init`
+
+`rosdep update`
+
+`rosdep install --from-paths src -y --ignore-src`
 
 `sudo apt-get install ros-<distro>-lanelet2`
 
@@ -26,9 +33,9 @@ osm_visualizer node visualizes the .osm(OpenStreetMap) file into RViz MarkerArra
 
 `ros2 run map_visualizer osm_visualizer --ros-args -p map_path:=path/to/map.osm`
 
-or `ros2 launch map_visualizer osm_visualizer.launch.xml`
+or `ros2 launch map_visualizer osm_visualizer.launch.xml` you need to change map path
 
-or `ros2 launch map_visualizer osm_visualizer.launch.py`
+or `ros2 launch map_visualizer osm_visualizer.launch.py` you need to change map path
 
 ### Subscribed Topics
 
