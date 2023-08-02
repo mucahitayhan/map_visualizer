@@ -2,10 +2,12 @@
 
 OsmVisualizer::OsmVisualizer() : Node("OsmVisualizer")
 {
-  this->declare_parameter("map_path","/home/otonom/Downloads/a.osm");
+  this->declare_parameter("map_path", "/home/atakan/Downloads/Town10.osm");
+  this->declare_parameter("enable_inc_path_points", true);
+  this->declare_parameter("interval", 2.0);
   if (!readParameters())
       rclcpp::shutdown();
-      
+  
   publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("/hd_map", 10);
   array_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/array", 10);
   timer_ = this->create_wall_timer( 500ms, std::bind(&OsmVisualizer::timer_callback, this));
@@ -19,14 +21,24 @@ OsmVisualizer::OsmVisualizer() : Node("OsmVisualizer")
 
   fill_marker(map);
   fill_array_with_left_right(map);
-  writeToFile(m_array);
+  // writeToFile(m_array);
 }
 
 bool OsmVisualizer::readParameters()
 {
     if (!this->get_parameter("map_path", map_path_))
     {
-        std::cout << "Failed to read parameter map_path" << std::endl;
+        std::cout << "Failed to read parameter 'map_path' " << std::endl;
+        return false;
+    }
+    if (!this->get_parameter("enable_inc_path_points", enable_inc_path_points_))
+    {
+        std::cout << "Failed to read parameter 'interval' to increase the path points" << std::endl;
+        return false;
+    }
+    if (!this->get_parameter("interval", interval_))
+    {
+        std::cout << "Failed to read parameter 'interval' to increase the path points" << std::endl;
         return false;
     }
     return true;
@@ -42,13 +54,12 @@ void OsmVisualizer::timer_callback()
     }
 }
 
-
 void OsmVisualizer::fill_array(lanelet::LaneletMapPtr &t_map)
 {
   m_array.layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
   m_array.layout.dim[0].label = "rows";
-  m_array.layout.dim[0].size = t_map->laneletLayer.size();
-  m_array.layout.dim[0].stride = t_map->laneletLayer.size()*2;
+  m_array.layout.dim[0].size = 100000;
+  m_array.layout.dim[0].stride = 100000*2;
   m_array.layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
   m_array.layout.dim[1].label = "cols";
   m_array.layout.dim[1].size = 2;
@@ -59,10 +70,10 @@ void OsmVisualizer::fill_array(lanelet::LaneletMapPtr &t_map)
   {
     for(size_t i = 0; i<ll.centerline2d().size()-1; i++)
     {
-      if(getDistance(ll,i) > 1.0)
+      if(getDistance(ll,i) > 2 && enable_inc_path_points_)
       {
         double dist = getDistance(ll,i);
-        double interval = 0.5;
+        double interval = 1;
         int num_points = dist / interval;
 
         for(int k = 0 ; k<num_points;k++)
@@ -73,12 +84,13 @@ void OsmVisualizer::fill_array(lanelet::LaneletMapPtr &t_map)
       }
       else
       {
-        m_array.data.push_back(ll.centerline2d()[i].x());
-        m_array.data.push_back(ll.centerline2d()[i].y());
+      m_array.data.push_back(ll.centerline2d()[i].x());
+      m_array.data.push_back(ll.centerline2d()[i].y());
       }
     }
   }
 }
+
 
 void OsmVisualizer::writeToFile(const std_msgs::msg::Float64MultiArray& multi_array)
 {
@@ -87,7 +99,7 @@ void OsmVisualizer::writeToFile(const std_msgs::msg::Float64MultiArray& multi_ar
   {
     for (size_t i = 0; i < multi_array.data.size(); ++i)
     {
-      file << multi_array.data[i] << " ";
+      file << multi_array.data[i] << ",";
       if ((i + 1) % (multi_array.layout.dim[0].size) == 0)
         file << "\n";
       if ((i + 1) % (multi_array.layout.dim[1].size) == 0)
@@ -125,74 +137,44 @@ void OsmVisualizer::fill_array_with_left_right(lanelet::LaneletMapPtr &t_map)
   }
 }
 
+
 double OsmVisualizer::getDistance(const lanelet::ConstLanelet &ll , size_t i) 
 {
     return std::sqrt(std::pow(ll.centerline2d()[i].x() - ll.centerline2d()[i+1].x(),2)+std::pow(ll.centerline2d()[i].y()-ll.centerline2d()[i+1].y(),2));
 }
 
-
 void OsmVisualizer::fill_marker(lanelet::LaneletMapPtr &t_map)
 {
   size_t i =  0;
-  for (const auto &ll : t_map->laneletLayer)
+
+  // for lanelets
+  std::vector<lanelet::ConstLineString3d> bounds;
+  bounds.push_back(ll.leftBound());
+  bounds.push_back(ll.rightBound());
+
+  for (const auto &bound : bounds)
   {
-    // arrows for directions
-    lanelet::ConstLineString3d center_line = ll.centerline3d();
     visualization_msgs::msg::Marker marker;
     marker.header.frame_id = "map";
     marker.header.stamp = rclcpp::Clock{}.now();
     marker.ns = "lanelet";
-    marker.id = i; i++;
-    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.id = i;
+    i++;
+    marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = 0.2;
-    marker.scale.y = 1.0;
-    marker.scale.z = 1.0;
-    marker.color.a = 0.8;
-    marker.color.r = 0.7;
-    marker.color.g = 1.0;
-    marker.color.b = 0.8;
-    geometry_msgs::msg::Point p1;
-    geometry_msgs::msg::Point p2;
-    p1.x = center_line[center_line.size()/2 - 2].x();
-    p1.y = center_line[center_line.size()/2 - 2].y();
-    p1.z = 0;
-    p2.x = center_line[center_line.size()/2 + 2].x();
-    p2.y = center_line[center_line.size()/2 + 2].y();
-    p2.z = 0;
-    marker.points.push_back(p1);
-    marker.points.push_back(p2);
-    m_marker_array.markers.push_back(marker);
-
-    // for lanelets
-    std::vector<lanelet::ConstLineString3d> bounds;
-    bounds.push_back(ll.leftBound());
-    bounds.push_back(ll.rightBound());
-
-    for (const auto &bound : bounds)
+    marker.scale.x = 0.1;
+    marker.color.a = 1.0;
+    marker.color.r = 232;
+    marker.color.g = 44;
+    marker.color.b = 44;
+    for (const auto &point : bound)
     {
-      visualization_msgs::msg::Marker marker;
-      marker.header.frame_id = "map";
-      marker.header.stamp = rclcpp::Clock{}.now();
-      marker.ns = "lanelet";
-      marker.id = i;
-      i++;
-      marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-      marker.action = visualization_msgs::msg::Marker::ADD;
-      marker.scale.x = 0.1;
-      marker.color.a = 1.0;
-      marker.color.r = 232;
-      marker.color.g = 44;
-      marker.color.b = 44;
-      for (const auto &point : bound)
-      {
-          geometry_msgs::msg::Point p;
-          p.x = point.x();
-          p.y = point.y();
-          p.z = 0;
-          marker.points.push_back(p);
-      }
-      m_marker_array.markers.push_back(marker);
+        geometry_msgs::msg::Point p;
+        p.x = point.x();
+        p.y = point.y();
+        p.z = 0;
+        marker.points.push_back(p);
     }
+    m_marker_array.markers.push_back(marker);
   }
 }

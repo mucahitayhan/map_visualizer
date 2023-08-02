@@ -6,7 +6,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
-#include "std_msgs/msg/int8_multi_array.hpp"
 
 // lanelet libraries
 #include <lanelet2_io/Io.h>
@@ -35,9 +34,12 @@ class OsmVisualizer : public rclcpp::Node
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr publisher_;
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr array_publisher_;
-    std_msgs::msg::Float64MultiArray m_array;
-    visualization_msgs::msg::MarkerArray m_marker_array;  
-    std::string map_path_; 
-    
 
+    std_msgs::msg::Float64MultiArray m_array;
+    visualization_msgs::msg::MarkerArray m_marker_array;
+
+    //params
+    std::string map_path_; 
+    bool enable_inc_path_points_;
+    double interval_;
 };

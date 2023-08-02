@@ -1,0 +1,12 @@
+<launch>
+    <arg name="map_path" default="/home/otonom/Downloads/a.osm"/>
+    <arg name="enable_inc_path_points" default="false"/>
+    <arg name="interval" default="0.5"/>
+
+    <node pkg="map_visualizer" exec="osm_visualizer" name="osm_visualizer">
+      <param name="map_path" value="$(var map_path)"/>
+      <param name="enable_inc_path_points" value="$(var enable_inc_path_points)"/>
+      <param name="interval" value="$(var interval)"/>
+    </node>
+
+</launch>
