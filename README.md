@@ -90,8 +90,6 @@ occupancy_pub node turn the osm data provided by osm_visualizer node into nav_ms
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE) file.
 
 
-Made with by <a href="https://github.com/mucahitayhan" target="_blank">Mücahit Ayhan</a>
-
 &#xa0;
 
 <a href="#top">Back to top</a>
