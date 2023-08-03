@@ -2,7 +2,7 @@
 
 ## :dart: About ##
 This package provides the visualize the map in ROS2 using MarkerArray and Occupancygrid map types.
-There is two node <a href="#osm_visualizer-node">osm_visualizer node</a> and <a href="#occupancy_pub-node">occupancy_pub node</a> in this package.
+There is two node <a href="#1---osm_visualizer-node">osm_visualizer node</a> and <a href="#2---occupancy_pub-node">occupancy_pub node</a> in this package.
 
 ## :rocket: Technologies ##
 
@@ -23,7 +23,7 @@ Before starting :checkered_flag:, you need to have ROS2(Foxy) and install some r
 
 E.g: `sudo apt-get install ros-foxy-lanelet2`
 
-## osm_visualizer node
+## 1 - osm_visualizer node
 
 ### :sparkles: Features
 
@@ -57,7 +57,7 @@ or `ros2 launch map_visualizer osm_visualizer.launch.py` you need to change map 
 
 ---
 
-## occupancy_pub node
+## 2 - occupancy_pub node
 
 ### :sparkles: Features
 
